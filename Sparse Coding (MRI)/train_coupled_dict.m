@@ -1,6 +1,6 @@
 function [Dh, Dl] = train_coupled_dict(Xh, Xl, dict_size, lambda)
 
-addpath(genpath('RegularizedSC_MRI'));
+% addpath(genpath('RegularizedSC_MRI'));
 
 hDim = size(Xh, 1);
 lDim = size(Xl, 1);
