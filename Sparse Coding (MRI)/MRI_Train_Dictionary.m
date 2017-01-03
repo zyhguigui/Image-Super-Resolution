@@ -16,7 +16,7 @@ fprintf('Done!\n');
 dict_size  = 512;          % dictionary size
 lambda     = 0.05;         % sparsity regularization, original value 0.15
 patch_size = 5;            % image patch size
-patch_num  = 10000;        % number of patches to sample, original value 100000
+patch_num  = 100000;        % number of patches to sample, original value 100000
 % upscale    = MRI_patient.hdr.dime.pixdim(2:4)./MRI_template.hdr.dime.pixdim(2:4); 
 upscale = [1,1,2];         % upscaling factor of three dimensions
 upscale(upscale<1) = 1;    % Doing super-resolution, do not downsample the images.
@@ -28,13 +28,30 @@ fprintf('Generating image patches...');
 
 % prune patches with small variances, threshould chosen based on the training data
 [Xh, Xl] = patch_pruning(Xh, Xl, 10); % original threshold: 10
-fprintf('Done!\n');
+fprintf('Done!\n'); 
 
 %% Train dictionaries
 fprintf('Training dictionaries...\n');
 % joint sparse coding 
 [Dh, Dl] = train_coupled_dict(Xh, Xl, dict_size, lambda);
 
-dict_path = ['Dictionary\\Dict_size' num2str(dict_size) '_sparsity' num2str(lambda) '_scale' regexprep(num2str(upscale),'  ',',') '.mat' ];
+% dict_path = ['Dictionary\\Dict_size' num2str(dict_size) '_sparsity' num2str(lambda) '_scale' regexprep(num2str(upscale),'  ',',') '.mat' ];
+dict_path = ['Dictionary\Dict_', datestr(now, 30), '.mat' ];
 save(dict_path, 'Dh', 'Dl', 'dict_size', 'lambda', 'patch_size', 'patch_num', 'upscale');
 fprintf('Final dictionaries saved in %s.\n\n',dict_path);
+
+%% Recover high resolution images
+% =========== testing codes ==============%
+hIm_test = MRI_template.img(1:round(end/4),1:round(end/10),1:round(end/10));
+lIm_test = single(affine(hIm_test, diag([1./upscale,1]), [], 0));
+
+overlap = 4;
+maxIter = 20;
+
+hIm_re_test = ScSR(lIm_test, Dh, Dl, upscale, lambda, overlap, patch_size, 0); % need to interpolate
+
+size = min([size(hIm_test);size(hIm_re_test)]);
+hIm_re_test = hIm_re_test(1:size(1),1:size(2),1:size(3));
+
+hIm_re_test = backprojection(hIm_re_test, lIm_test, maxIter);
+

@@ -29,7 +29,7 @@ cnt = 0;
 % loop to recover each low-resolution patch
 for ii = 1:length(gridx)
     for jj = 1:length(gridy)
-        
+    
         cnt = cnt+1;
         xx = gridx(ii);
         yy = gridy(jj);
