@@ -13,17 +13,17 @@ Idx = find( hNorm & lNorm );
 Xh = Xh(:, Idx);
 Xl = Xl(:, Idx);
 
-Xh = Xh./repmat(sqrt(sum(Xh.^2)), size(Xh, 1), 1);
-Xl = Xl./repmat(sqrt(sum(Xl.^2)), size(Xl, 1), 1);
+Xh = Xh./repmat(sqrt(sum(Xh.^2)), size(Xh, 1), 1);  % Normalize Xh
+Xl = Xl./repmat(sqrt(sum(Xl.^2)), size(Xl, 1), 1);  % Normalize Xl
 
 % joint learning of the dictionary
-X = [sqrt(hDim)*Xh; sqrt(lDim)*Xl];
+X = [sqrt(hDim)*Xh; sqrt(lDim)*Xl]; % According to the paper it should be 1/sqrt(hDim) and 1/sqrt(lDim)?
 Xnorm = sqrt(sum(X.^2, 1));
 
 clear Xh Xl;
 
 X = X(:, Xnorm > 1e-5);
-X = X./repmat(sqrt(sum(X.^2, 1)), hDim+lDim, 1);
+X = X./repmat(sqrt(sum(X.^2, 1)), hDim+lDim, 1);  % Normalize X
 
 % idx = randperm(size(X, 2)); % Unused variable, 2017/01/02
 

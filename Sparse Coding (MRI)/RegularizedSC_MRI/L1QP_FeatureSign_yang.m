@@ -1,4 +1,4 @@
-%% L1QP_FeatureSign solves nonnegative quadradic programming
+%% L1QP_FeatureSign solves nonnegative quadratic programming
 % using Feature Sign.
 %
 %    min  0.5*x'*A*x+b'*x+\lambda*|x|

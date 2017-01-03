@@ -1,6 +1,6 @@
 function [B, S, stat] = reg_sparse_coding(X, num_bases, Sigma, beta, gamma, num_iters, batch_size, initB, fname_save)
 %
-% Regularized sparse coding
+% Regularized sparse coding, train dictionaries
 %
 % Inputs
 %       X           -data samples, column wise
@@ -19,6 +19,14 @@ function [B, S, stat] = reg_sparse_coding(X, num_bases, Sigma, beta, gamma, num_
 %       stat        -statistics about the training
 %
 % Written by Jianchao Yang @ IFP UIUC, Sep. 2009.
+%
+% Additional notes on algorithm:
+%    1. Initialize dictionary B;
+%    2. Fix B, train sparse codes S;
+%    3. Fix S, train dictionary B;
+%    4. Iterate between 2 and 3 for a fixed number of times (set by num_iters).
+%
+% Written on 2017/01/03
 
 pars = struct;
 pars.patch_size = size(X,1);
@@ -51,9 +59,9 @@ end
 
 pars
 
-% initialize basis
+%% initialize basis/Dictionary
 if ~exist('initB') || isempty(initB)
-    B = rand(pars.patch_size, pars.num_bases)-0.5;
+    B = rand(pars.patch_size, pars.num_bases)-0.5; % Uniformly distributed random numbers in the interval (-0.5,0.5)
 	B = B - repmat(mean(B,1), size(B,1),1);
     B = B * diag(1./sqrt(sum(B.*B)));
 else
@@ -63,17 +71,18 @@ end
 
 % [L, M]=size(B); % Unused variables, 2017/01/02
 
-t=0;
 % statistics variable
 stat= [];
 stat.fobj_avg = [];
 stat.elapsed_time=0;
 
-% optimization loop
-while t < pars.num_trials
-    t=t+1;
-    start_time= cputime;
-    stat.fobj_total=0;    
+%% Train dictionaries
+% t=0;                       % original codes
+% while t < pars.num_trials
+%     t = t + 1;
+for t = 1:pars.num_trials    % Modified 2017/01/03
+    start_time = cputime;
+    stat.fobj_total = 0;    
     % Take a random permutation of the samples
     indperm = randperm(size(X,2));
     
@@ -82,10 +91,10 @@ while t < pars.num_trials
     for batch=1:(size(X,2)/pars.batch_size)
         % This is data to use for this step
         batch_idx = indperm((1:pars.batch_size)+pars.batch_size*(batch-1));
-        Xb = X(:,batch_idx);
+        Xb = X(:,batch_idx); % Xb: a batch of X
         
         % learn coefficients (conjugate gradient)   
-        S = L1QP_FeatureSign_Set(Xb, B, Sigma, pars.beta, pars.gamma);
+        S = L1QP_FeatureSign_Set(Xb, B, Sigma, pars.beta, pars.gamma); % solved through linear programming
         
         sparsity(end+1) = length(find(S(:) ~= 0))/length(S(:));
         
@@ -93,15 +102,15 @@ while t < pars.num_trials
         [fobj] = getObjective_RegSc(Xb, B, S, Sigma, pars.beta, pars.gamma);       
         stat.fobj_total = stat.fobj_total + fobj;
         % update basis
-        B = l2ls_learn_basis_dual(Xb, S, pars.VAR_basis);
+        B = l2ls_learn_basis_dual(Xb, S, pars.VAR_basis); % Quadratically constrained quadratic programming 
     end
     
     % get statistics
     stat.fobj_avg(t)      = stat.fobj_total / pars.num_patches;
     stat.elapsed_time(t)  = cputime - start_time;
     
-    fprintf(['epoch= %d, sparsity = %f, fobj= %f, took %0.2f ' ...
-             'seconds\n'], t, mean(sparsity), stat.fobj_avg(t), stat.elapsed_time(t));
+    fprintf(['epoch= %d/%d, sparsity = %f, fobj= %f, took %0.2f ' ...
+             'seconds\n'], t, pars.num_trials, mean(sparsity), stat.fobj_avg(t), stat.elapsed_time(t));
          
     % save results, create directory if it does not exist
     fprintf('saving results ...\n');
@@ -114,15 +123,15 @@ while t < pars.num_trials
         mkdir(dir{1:end-1});
         save(experiment.matfname, 't', 'pars', 'B', 'stat');
     end
-    fprintf('saved as %s\n', experiment.matfname);
+    fprintf('Dictionary saved as %s\n', experiment.matfname);
 end
 
-return
-
-function retval = assert(expr)
-retval = true;
-if ~expr 
-    error('Assertion failed');
-    retval = false;
 end
-return
+
+% function retval = assert(expr) % Unused funtion, 2017/01/03
+% retval = true;
+% if ~expr 
+%     error('Assertion failed');
+%     retval = false;
+% end
+% return
