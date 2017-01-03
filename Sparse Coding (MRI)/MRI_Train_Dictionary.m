@@ -20,7 +20,6 @@ patch_num  = 10000;        % number of patches to sample, original value 100000
 % upscale    = MRI_patient.hdr.dime.pixdim(2:4)./MRI_template.hdr.dime.pixdim(2:4); 
 upscale = [1,1,2];         % upscaling factor of three dimensions
 upscale(upscale<1) = 1;    % Doing super-resolution, do not downsample the images.
-% upscale(upscale>2) = 2;
 
 %% Generate image patches
 fprintf('Generating image patches...');

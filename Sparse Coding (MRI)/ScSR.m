@@ -1,12 +1,16 @@
-function [hIm] = ScSR(lIm, up_scale, Dh, Dl, lambda, overlap)
-
-addpath(genpath('RegularizedSC_MRI'));
+function [hIm] = ScSR(lIm, up_scale, Dh, Dl, lambda, overlap, patch_size)
+%
+%
+%
+%
+%
+% addpath(genpath('RegularizedSC_MRI')); % 2017/01/03
 
 % normalize the dictionary
 norm_Dl = sqrt(sum(Dl.^2, 1)); 
 Dl = Dl./repmat(norm_Dl, size(Dl, 1), 1);
 
-patch_size = sqrt(size(Dh, 1));
+% patch_size = sqrt(size(Dh, 1)); % 2017/01/03
 
 % bicubic interpolation of the low-resolution image
 mIm = single(imresize(lIm, up_scale, 'bicubic'));
