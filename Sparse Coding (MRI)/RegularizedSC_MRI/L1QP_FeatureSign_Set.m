@@ -5,7 +5,7 @@ nBases = size(B, 2);
 
 % sparse codes of the features
 % S = sparse(nBases, nSmp); % original code
-S = zeros(nBases, nSmp); % modified 2017/01/01
+S = zeros(nBases, nSmp);    % modified 2017/01/01
 
 A = B'*B + 2*beta*Sigma;
 

@@ -54,7 +54,7 @@ end
 if exist('fname_save', 'var') && ~isempty(fname_save)
     pars.filename = fname_save;
 else
-    pars.filename = sprintf('Dict_Train_Results\\reg_sc_b%d_%s', num_bases, datestr(now, 30));	
+    pars.filename = sprintf('Temporary dictionary\\reg_sc_b%d_%s', num_bases, datestr(now, 30));	
 end
 
 pars
@@ -81,7 +81,8 @@ stat.elapsed_time=0;
 % while t < pars.num_trials
 %     t = t + 1;
 for t = 1:pars.num_trials    % Modified 2017/01/03
-    start_time = cputime;
+    % start_time = cputime;  % original code
+    tic;        % Modified 2017/01/03
     stat.fobj_total = 0;    
     % Take a random permutation of the samples
     indperm = randperm(size(X,2));
@@ -107,7 +108,8 @@ for t = 1:pars.num_trials    % Modified 2017/01/03
     
     % get statistics
     stat.fobj_avg(t)      = stat.fobj_total / pars.num_patches;
-    stat.elapsed_time(t)  = cputime - start_time;
+    % stat.elapsed_time(t)  = cputime - start_time; % original code
+    stat.elapsed_time(t) = toc;  % modified 2017/01/03
     
     fprintf(['epoch= %d/%d, sparsity = %f, fobj= %f, took %0.2f ' ...
              'seconds\n'], t, pars.num_trials, mean(sparsity), stat.fobj_avg(t), stat.elapsed_time(t));
@@ -123,7 +125,7 @@ for t = 1:pars.num_trials    % Modified 2017/01/03
         mkdir(dir{1:end-1});
         save(experiment.matfname, 't', 'pars', 'B', 'stat');
     end
-    fprintf('Dictionary saved as %s\n', experiment.matfname);
+    fprintf('Temporary dictionaries saved in %s\n', experiment.matfname);
 end
 
 end

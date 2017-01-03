@@ -16,7 +16,8 @@ b = double(b);
 EPS = 1e-9;
 x=zeros(size(A, 1), 1);           %coeff
 
-grad=A*sparse(x)+b;
+% grad = A*sparse(x)+b; % original code
+grad = A*x + b;         % Modified 2017/01/02
 [ma, mi]=max(abs(grad).*(x==0));
 
 while true

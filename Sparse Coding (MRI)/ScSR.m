@@ -1,5 +1,7 @@
 function [hIm] = ScSR(lIm, up_scale, Dh, Dl, lambda, overlap)
 
+addpath(genpath('RegularizedSC_MRI'));
+
 % normalize the dictionary
 norm_Dl = sqrt(sum(Dl.^2, 1)); 
 Dl = Dl./repmat(norm_Dl, size(Dl, 1), 1);

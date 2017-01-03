@@ -1,4 +1,4 @@
-function [Dh, Dl] = train_coupled_dict(Xh, Xl, dict_size, lambda, upscale)
+function [Dh, Dl] = train_coupled_dict(Xh, Xl, dict_size, lambda)
 
 addpath(genpath('RegularizedSC_MRI'));
 
@@ -37,7 +37,9 @@ Dl = D(hDim+1:end, :);
 % Dh = Dh./repmat(sqrt(sum(Dh.^2, 1)), hDim, 1);
 % Dl = Dl./repmat(sqrt(sum(Dl.^2, 1)), lDim, 1);
 
-patch_size = sqrt(size(Dh, 1));
-
-dict_path = ['Dictionary/D_' num2str(dict_size) '_' num2str(lambda) '_' num2str(patch_size) '_s' num2str(upscale) '.mat' ];
-save(dict_path, 'Dh', 'Dl');
+%Comment on 2017/01/03
+% patch_size = sqrt(size(Dh, 1));
+% 
+% dict_path = ['Dictionary/D_' num2str(dict_size) '_' num2str(lambda) '_' num2str(patch_size) '_s' num2str(upscale) '.mat' ];
+% save(dict_path, 'Dh', 'Dl');
+end
