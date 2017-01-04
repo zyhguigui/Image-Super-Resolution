@@ -34,7 +34,9 @@ im_l_cb = im_l_ycbcr(:, :, 2);
 im_l_cr = im_l_ycbcr(:, :, 3);
 
 % image super-resolution based on sparse representation
+profile on
 [im_h_y] = ScSR(im_l_y, 2, Dh, Dl, lambda, overlap);
+profile viewer
 [im_h_y] = backprojection(im_h_y, im_l_y, maxIter);
 
 % upscale the chrominance simply by "bicubic" 

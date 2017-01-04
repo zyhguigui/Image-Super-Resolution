@@ -28,8 +28,8 @@ if interpolated == 0
 end
 
 % Initialize high resolution image
-hIm = zeros(size(lIm));
-cntMat = zeros(size(lIm));
+hIm = single(zeros(size(lIm)));
+cntMat = single(zeros(size(lIm)));
 
 [row, column, page] = size(lIm);
 

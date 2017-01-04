@@ -42,7 +42,7 @@ fprintf('Final dictionaries saved in %s.\n\n',dict_path);
 
 %% Recover high resolution images
 % =========== testing codes ==============%
-hIm_test = MRI_template.img(1:round(end/4),1:round(end/10),1:round(end/10));
+hIm_test = MRI_template.img; %(1:round(end/4),1:round(end/10),1:round(end/10));
 lIm_test = single(affine(hIm_test, diag([1./upscale,1]), [], 0));
 
 overlap = 4;
@@ -53,5 +53,5 @@ hIm_re_test = ScSR(lIm_test, Dh, Dl, upscale, lambda, overlap, patch_size, 0); %
 size = min([size(hIm_test);size(hIm_re_test)]);
 hIm_re_test = hIm_re_test(1:size(1),1:size(2),1:size(3));
 
-hIm_re_test = backprojection(hIm_re_test, lIm_test, maxIter);
+% hIm_re_test = backprojection(hIm_re_test, lIm_test, maxIter);
 
