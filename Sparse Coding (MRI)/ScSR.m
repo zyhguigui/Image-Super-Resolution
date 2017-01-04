@@ -22,7 +22,7 @@ Dl = Dl./repmat(norm_Dl, size(Dl, 1), 1);
 
 % Interpolation of the low-resolution image
 if interpolated == 0
-    fprintf('Interpolated low resolution images before super-resolution...');
+    fprintf('    Interpolated low resolution images before super-resolution...');
     lIm = single(affine(lIm, diag([upscale,1]), [], 0));
     fprintf('Done!\n');
 end
@@ -51,6 +51,7 @@ cnt = 0;
 % loop to recover each low-resolution patch
 for i = 1:length(gridx)
     for j = 1:length(gridy)
+        tic;
         for k = 1:length(gridz)
             cnt = cnt+1;
             x = gridx(i);
@@ -94,6 +95,8 @@ for i = 1:length(gridx)
             cntMat(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1) = ...
                 cntMat(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1) + 1;
         end
+        usedtime = toc;
+        fprintf('    Slice %d/%d, %d/%d, use %.3fs.\n',i,length(gridx),j,length(gridy),usedtime);
     end
 end
 
