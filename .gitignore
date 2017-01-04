@@ -20,6 +20,9 @@ $RECYCLE.BIN/
 # Auto saved files
 *.asv
 
+# experiment results
+*Super-Resolution Results*
+
 # =========================
 # Operating System Files
 # =========================
