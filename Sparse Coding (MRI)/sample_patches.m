@@ -129,8 +129,8 @@ elseif ndims(image) == 3
 %     lImG2xz = (lImG2xz / max(lImG2xz(:)))*100;      
     
     % make patches
-    HP = zeros(patch_size^3, patch_num);
-    LP = zeros(6*patch_size^3, patch_num);
+    HP = single(zeros(patch_size^3, patch_num));
+    LP = single(zeros(6*patch_size^3, patch_num));
     for ii = 1:patch_num
         row = X(ii);
         col = Y(ii);
