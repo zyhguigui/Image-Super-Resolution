@@ -2,7 +2,7 @@ function [im_h] = backprojection(im_h, im_l, maxIter)
 
 % [row_l, col_l] = size(im_l); % original code
 % [row_h, col_h] = size(im_h); % original code
-scale = size(im_l) ./ size(im_h);
+scale = size(im_l) ./ size(im_h); % add on 2017/01/04
 size_im_h = size(im_h);
 
 % original codes
@@ -29,17 +29,23 @@ for i = 1:maxIter
         size_im_diff = size(im_diff);
     end
     if max(size_im_h./size_im_diff) > 1
-        size_diff = size_im_h - size_im_diff;
-        for ii = 1:length(size_diff)
-           if size_diff(ii) == 0
+        diffsize = size_im_h - size_im_diff;
+        for ii = 1:length(diffsize)
+           if diffsize(ii) == 0
                continue;
-           else
-               im_diff = cat(ii, im_diff, im_diff()); % Not done here!!!!!!!!!!!
            end
-           
+           switch ii
+               case 1
+                   im_diff = cat(1, im_diff, im_diff(end-diffsize(1)+1:end, :, :));
+               case 2
+                   im_diff = cat(2, im_diff, im_diff(:, end-diffsize(2)+1:end, :));
+               case 3
+                   im_diff = cat(3, im_diff, im_diff(:, :, end-diffsize(3)+1:end));
+           end
         end
     end
     
+    % Add the difference back
     % im_h = im_h + conv2(im_diff, p, 'same'); % original code
     im_h = im_h + imgaussfilt3(im_diff, 1, 'FilterSize', 5);  % 2017/01/03: filter by 5x5x5 gaussian filter with std = 1
 end
