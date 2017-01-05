@@ -37,9 +37,15 @@ pars.beta = beta;
 pars.gamma = gamma;
 pars.VAR_basis = 1; % maximum L2 norm of each dictionary atom
 
+% original
 if ~isa(X, 'double')
     X = cast(X, 'double');
 end
+
+% Modified 2017/01/05
+% if ~isa(X, 'single')
+%     X = cast(X, 'single');
+% end
 
 if isempty(Sigma)
 	Sigma = eye(pars.num_bases);
@@ -94,9 +100,28 @@ for t = 1:pars.num_trials    % Modified 2017/01/03
         batch_idx = indperm((1:pars.batch_size)+pars.batch_size*(batch-1));
         Xb = X(:,batch_idx); % Xb: a batch of X
         
+        % original code
         % learn coefficients (conjugate gradient)   
-        S = L1QP_FeatureSign_Set(Xb, B, Sigma, pars.beta, pars.gamma); % solved through linear programming
+        % S = L1QP_FeatureSign_Set(Xb, B, Sigma, pars.beta, pars.gamma); % solved through linear
+        % programming 
         
+        % ============== replace L1QP_FeatureSign_Set() ================= %
+        [~, nSmp] = size(Xb);
+        nBases = size(B, 2);
+        
+        % sparse codes of the features
+        % S = sparse(nBases, nSmp); % original code
+        S = zeros(nBases, nSmp);    % modified 2017/01/01
+        
+        A = B'*B + 2 * pars.beta * Sigma;
+        
+        parfor ii = 1:nSmp
+            b = -B' * Xb(:, ii);
+            %     [net] = L1QP_FeatureSign(gamma, A, b);
+            S(:, ii) = L1QP_FeatureSign_yang(gamma, A, b);
+        end
+        % ============== replace L1QP_FeatureSign_Set() ================= %
+   
         sparsity(end+1) = length(find(S(:) ~= 0))/length(S(:));
         
         % get objective
