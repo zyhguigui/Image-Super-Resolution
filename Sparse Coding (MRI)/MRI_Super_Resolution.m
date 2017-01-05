@@ -6,16 +6,16 @@ fprintf('Done!\n');
 
 fprintf('Normalizing data...') % Normalize data to range 0~100
 MRI_template.img = single(MRI_template.img - min(MRI_template.img(:)));
-MRI_template.img = MRI_template.img / max(MRI_template.img(:)) * 100; 
+MRI_template.img = MRI_template.img / max(MRI_template.img(:)); 
 % MRI_patient.img = single(MRI_patient.img - min(MRI_patient.img(:)));
 % MRI_patient.img = MRI_patient.img / max(MRI_patient.img(:)) * 100;
 fprintf('Done!\n');
 
 %% Load dictionary
-load('Dictionary/Dict_20170104T170237.mat');
-overlap = 7;
+load('Dictionary/Dict_20170105T155501.mat');
+overlap = 9;
 maxIter = 20;
-lambda = 0.04;
+lambda = 0.05;
 
 %% Recover high resolution images
 % =========== testing codes ==============%
@@ -32,8 +32,8 @@ lIm_Interpolate = single(affine(lIm_test, diag([upscale,1]), [], 0));
 % recovered high resolution image
 fprintf('Performing reconstruction...\n');
 hIm_sr_nofinetune = ScSR(lIm_Interpolate, Dh, Dl, upscale, lambda, overlap, patch_size, 1); % Don't need to interpolate
-size = min([size(hIm_gnd_truncate);size(hIm_sr_nofinetune)]);
-hIm_sr_nofinetune = hIm_sr_nofinetune(1:size(1),1:size(2),1:size(3));
+minsize = min([size(hIm_gnd_truncate);size(hIm_sr_nofinetune)]);
+hIm_sr_nofinetune = hIm_sr_nofinetune(1:minsize(1),1:minsize(2),1:minsize(3));
 fprintf('Reconstruction finished!\n\n');
 
 % fine-tuning of recovered high resolution image

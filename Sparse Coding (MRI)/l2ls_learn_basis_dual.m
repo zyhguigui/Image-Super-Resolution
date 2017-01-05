@@ -40,7 +40,8 @@ options = optimset('Algorithm','trust-region-reflective','GradObj','on', 'Hessia
 % Modified 2017/01/03
 % [x, fval, ~, ~] = fmincon(@(x) fobj_basis_dual(x, SSt, XSt, X, c, trXXt), dual_lambda, [], [], [], [], lb, [], [], options);
 % Modified 2017/01/03
-[x, ~, ~, ~] = fmincon(@(x) fobj_basis_dual(x, SSt, XSt, X, c, trXXt), dual_lambda, [], [], [], [], lb, [], [], options);
+[x, ~, ~, ~] = fmincon(@(x) fobj_basis_dual(x, double(SSt), double(XSt), double(X), c, double(trXXt)),...
+                       dual_lambda, [], [], [], [], lb, [], [], options);
 
 % output.iterations
 % fval_opt = -0.5*N*fval;  % unused variable, 2017/01/03

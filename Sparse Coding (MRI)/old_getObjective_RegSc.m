@@ -7,7 +7,7 @@ fresidue = 0.5*sum(sum(Err.^2));
 fsparsity = gamma*sum(sum(abs(S)));
 
 fregs = 0;
-for ii = size(S, 1)
+parfor ii = size(S, 1)
     fregs = fregs + beta*S(:, ii)'*Sigma*S(:, ii);
 end
 
