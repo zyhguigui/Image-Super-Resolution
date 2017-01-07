@@ -19,6 +19,7 @@ function [hIm] = ScSR(lIm, Dh, Dl, upscale, lambda, overlap, patch_size, interpo
 % normalize the dictionary
 norm_Dl = sqrt(sum(Dl.^2, 1));
 Dl = Dl./repmat(norm_Dl, size(Dl, 1), 1);
+Dl(isnan(Dl))=0;   % add on 2017/01/05
 
 % Interpolation of the low-resolution image
 if interpolated == 0
@@ -75,7 +76,8 @@ for i = 1:length(gridx)
                 m = mPatchFea;
             end
             
-            b = -Dl'*m;
+            % b = -Dl'*m; % original code, slow
+            b = -(m' * Dl)'; % modified 2017/01/05
             
             % sparse recovery
             w = L1QP_FeatureSign_yang(lambda, A, b);
@@ -96,7 +98,7 @@ for i = 1:length(gridx)
                 cntMat(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1) + 1;
         end
         usedtime = toc;
-        fprintf('    Slice %d/%d, %d/%d, use %.3fs.\n',i,length(gridx),j,length(gridy),usedtime);
+        fprintf('    Slice %d/%d, %d/%d, took %.3fs.\n',i,length(gridx),j,length(gridy),usedtime);
     end
 end
 

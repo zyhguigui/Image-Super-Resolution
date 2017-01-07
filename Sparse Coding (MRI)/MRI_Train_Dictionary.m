@@ -5,18 +5,19 @@ MRI_template = load_untouch_nii('D:\MRI Data\Cardiac Data\3D Model\time_1\3D_Mod
 % MRI_patient = load_untouch_nii('D:\MRI Data\Cardiac Data\short axis 3D\time_1\ShortAxis3D.nii');
 fprintf('Done!\n');
 
-fprintf('Normalizing data...') % Normalize data to range 0~100
-MRI_template.img = single(MRI_template.img - min(MRI_template.img(:)));
-MRI_template.img = MRI_template.img / max(MRI_template.img(:)) * 100; 
+% Normalization will be performed in function train_coupled_dict()
+% fprintf('Normalizing data...') 
+% MRI_template.img = single(MRI_template.img - min(MRI_template.img(:)));
+% MRI_template.img = MRI_template.img / max(MRI_template.img(:)) * 100; 
 % MRI_patient.img = single(MRI_patient.img - min(MRI_patient.img(:)));
 % MRI_patient.img = MRI_patient.img / max(MRI_patient.img(:)) * 100;
-fprintf('Done!\n');
+% fprintf('Done!\n');
 
 %% Set parameters
 dict_size  = 512;          % dictionary size
-lambda     = 0.02;         % sparsity regularization, original value 0.15
+lambda     = 0.03;         % sparsity regularization, original value 0.15
 patch_size = 10;            % image patch size
-patch_num  = 10000;        % number of patches to sample, original value 100000
+patch_num  = 30000;        % number of patches to sample, original value 100000
 % upscale    = MRI_patient.hdr.dime.pixdim(2:4)./MRI_template.hdr.dime.pixdim(2:4); 
 upscale = [1,1,10];         % upscaling factor of three dimensions
 upscale(upscale<1) = 1;    % Doing super-resolution, do not downsample the images.

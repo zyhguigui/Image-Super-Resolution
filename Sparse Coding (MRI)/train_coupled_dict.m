@@ -8,7 +8,7 @@ lDim = size(Xl, 1);
 % should pre-normalize Xh and Xl !
 hNorm = sqrt(sum(Xh.^2));
 lNorm = sqrt(sum(Xl.^2));
-Idx = find( hNorm & lNorm );
+Idx = single(find( hNorm & lNorm ));
 
 Xh = Xh(:, Idx);
 Xl = Xl(:, Idx);
