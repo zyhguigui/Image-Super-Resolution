@@ -71,13 +71,11 @@ for i = 1:length(gridx)
             mfNorm = sqrt(sum(mPatchFea.^2));
             
             if mfNorm > 1
-                m = mPatchFea./mfNorm;
-            else
-                m = mPatchFea;
+                mPatchFea = mPatchFea./mfNorm;  % Normalize
             end
             
             % b = -Dl'*m; % original code, slow
-            b = -(m' * Dl)'; % modified 2017/01/05
+            b = -(mPatchFea' * Dl)'; % modified 2017/01/05
             
             % sparse recovery
             w = L1QP_FeatureSign_yang(lambda, A, b);

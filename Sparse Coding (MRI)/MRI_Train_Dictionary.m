@@ -17,7 +17,7 @@ fprintf('Done!\n');
 dict_size  = 512;          % dictionary size
 lambda     = 0.03;         % sparsity regularization, original value 0.15
 patch_size = 10;            % image patch size
-patch_num  = 30000;        % number of patches to sample, original value 100000
+patch_num  = 10000;        % number of patches to sample, original value 100000
 % upscale    = MRI_patient.hdr.dime.pixdim(2:4)./MRI_template.hdr.dime.pixdim(2:4); 
 upscale = [1,1,10];         % upscaling factor of three dimensions
 upscale(upscale<1) = 1;    % Doing super-resolution, do not downsample the images.

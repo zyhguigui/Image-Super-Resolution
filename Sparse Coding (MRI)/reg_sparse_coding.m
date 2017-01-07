@@ -115,7 +115,7 @@ for t = 1:pars.num_trials    % Modified 2017/01/03
         
         A = B'*B + 2 * pars.beta * Sigma;
         
-        for ii = 1:nSmp
+        parfor ii = 1:nSmp
             % b = -B' * Xb(:, ii);  % original code, the slowest line!!!!!!!
             b = -(Xb(:, ii)' * B)'; % modified 2017/01/07
             %     [net] = L1QP_FeatureSign(gamma, A, b);
