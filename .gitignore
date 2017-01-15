@@ -25,6 +25,9 @@ $RECYCLE.BIN/
 *Temporary dictionary*
 *Convolution*
 *Dictionary*
+*.png
+*.jpg
+*.bmp
 
 # =========================
 # Operating System Files
