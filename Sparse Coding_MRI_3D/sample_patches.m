@@ -67,12 +67,14 @@ if ndims(image) == 2  %#ok<*ISMAT>
 elseif ndims(image) == 3
 %     lIm = single(affine(image, diag([1./upscale,1]),[],0)); % verbose set to 0
 %     lIm = single(affine(lIm, diag([upscale,1]),[],0));    % verbose set to 0
-    lIm = single(VolumeResize(image, round(size(image)./upscale),'spline'));
-    lIm = single(VolumeResize(lIm, size(image),'spline'));
 %     newsize = min([size(image);size(lIm)]); % The size of lIm may be different from hIm
 %     nrow = newsize(1); 
 %     ncol = newsize(2);
 %     npage = newsize(3);
+    lIm = single(VolumeResize(image, round(size(image)./upscale),'cubic'));
+    lIm = single(VolumeResize(lIm, size(image),'cubic'));
+    sum(isnan(lIm(:)))/prod(size(lIm))
+    lIm(isnan(lIm)) = 0;
     [nrow, ncol, npage] = size(lIm);
     
     x = randperm(nrow-2*patch_size-1) + patch_size;

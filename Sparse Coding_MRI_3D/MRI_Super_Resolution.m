@@ -1,6 +1,6 @@
 %% Load and Normalize MRI data
 fprintf('Loading data...');
-MRI_template = load_untouch_nii('D:\MRI Data\Cardiac Data\3D Model\time_1\3D_Model_truncate.nii');
+MRI_template = load_untouch_nii('/home/zibin203/Documents/Cardiac_MRI_Data/3D Model/time_1/3D_Model_truncate.nii');
 % MRI_patient = load_untouch_nii('D:\MRI Data\Cardiac Data\short axis 3D\time_1\ShortAxis3D.nii');
 fprintf('Done!\n');
 
@@ -12,7 +12,7 @@ MRI_template.img = MRI_template.img / max(MRI_template.img(:)) * 255;
 fprintf('Done!\n');
 
 %% Load dictionary
-load('Dictionary/Dict_20170115T010241.mat');
+load('Dictionary/Dict_20170118T231633.mat');
 overlap = 4;
 maxIter = 20;
 lambda = 0.05;
@@ -24,10 +24,10 @@ hIm_gnd = MRI_template.img; %(1:round(end/4),1:round(end/10),1:round(end/10));
 hIm_gnd_truncate = hIm_gnd(40:50, :, :); % truncate for faster calculation
 
 % low resolution image
-lIm_test = single(VolumeResize(hIm_gnd_truncate, round(size(hIm_gnd_truncate)./upscale),'spline'));
+lIm_test = single(VolumeResize(hIm_gnd_truncate, round(size(hIm_gnd_truncate)./upscale),'cubic'));
 
 % Interpolated "high" resoution image
-lIm_Interpolate = single(VolumeResize(lIm_test, size(hIm_gnd_truncate),'spline'));
+lIm_Interpolate = single(VolumeResize(lIm_test, size(hIm_gnd_truncate),'cubic'));
 
 % recovered high resolution image
 fprintf('Performing reconstruction...\n');
@@ -43,9 +43,10 @@ fprintf('Done!\n\n');
 
 % Display results
 slice = 5;
-figure; imshow(squeeze(hIm_gnd_truncate(slice,:,:)),'DisplayRange',[]); title('Ground truth image');
-figure; imshow(squeeze(lIm_Interpolate(slice,:,:)),'DisplayRange',[]); title('Interpolated low resolution image');
-figure; imshow(squeeze(hIm_sr_finetune(slice,:,:)),'DisplayRange',[]); title('Recovered high resolution image');
+figure; 
+subplot(1,3,1); imshow(squeeze(hIm_sr_finetune(slice,:,:)),'DisplayRange',[]); title('reconstructed');
+subplot(1,3,2); imshow(squeeze(lIm_Interpolate(slice,:,:)),'DisplayRange',[]); title('cubic');
+subplot(1,3,3);imshow(squeeze(hIm_gnd_truncate(slice,:,:)),'DisplayRange',[]); title('original');
 
 % Compute PSNR
 im_gnd = squeeze(hIm_gnd_truncate(slice,:,:));

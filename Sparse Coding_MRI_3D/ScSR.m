@@ -35,12 +35,12 @@ cntMat = single(zeros(size(lIm)));
 % extract low-resolution image features
 lImfea = extr_lIm_fea(lIm);
 
-% patch indexes for sparse recovery (avoid boundary) ×÷ÕßÎªºÎ°ÑrowºÍcolumnµ÷»»Ë³Ðò£¿
+% patch indexes for sparse recovery (avoid boundary) ï¿½ï¿½ï¿½ï¿½Îªï¿½Î°ï¿½rowï¿½ï¿½columnï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½
 % gridx = 3:patch_size - overlap : column-patch_size-2;
 % gridx = [gridx, column-patch_size-2];
 % gridy = 3:patch_size - overlap : row-patch_size-2;
 % gridy = [gridy, row-patch_size-2];
-gridx = [3 : patch_size - overlap : row-patch_size-2, row-patch_size-2];  % ×îºóÒ»¸öÊýÎªÊ²Ã´ÒªÖØ¸´Ò»´Î£¿
+gridx = [3 : patch_size - overlap : row-patch_size-2, row-patch_size-2];  % ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªÊ²Ã´Òªï¿½Ø¸ï¿½Ò»ï¿½Î£ï¿½
 gridy = [3 : patch_size - overlap : column-patch_size-2, column-patch_size-2];
 gridz = [3 : patch_size - overlap : page-patch_size-2, page-patch_size-2];
 
@@ -51,13 +51,14 @@ cnt = 0;
 for i = 1:length(gridx)
     for j = 1:length(gridy)
         tic;
+        sparsity = 0;
         for k = 1:length(gridz)
             cnt = cnt+1;
             x = gridx(i);
             y = gridy(j);
             z = gridz(k);
             
-            % mPatch = lIm(y:y+patch_size-1, x:x+patch_size-1); % ×÷ÕßÎªºÎ°ÑxºÍyµ÷»»Ë³Ðò£¿
+            % mPatch = lIm(y:y+patch_size-1, x:x+patch_size-1); % ï¿½ï¿½ï¿½ï¿½Îªï¿½Î°ï¿½xï¿½ï¿½yï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½
             mPatch = lIm(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1);
             mMean = mean(mPatch(:));
             mPatch = mPatch(:) - mMean;
@@ -77,6 +78,7 @@ for i = 1:length(gridx)
             
             % sparse recovery
             w = L1QP_FeatureSign_yang(lambda, A, b);
+            sparsity = sparsity + sum(w~=0)/length(w);
             
             % generate the high resolution patch and scale the contrast
             hPatch = Dh * w;
@@ -85,7 +87,7 @@ for i = 1:length(gridx)
             hPatch = reshape(hPatch, [patch_size, patch_size, patch_size]);
             hPatch = hPatch + mMean;
             
-            % ×÷ÕßÎªºÎ°ÑxºÍyµ÷»»Ë³Ðò£¿
+            % ï¿½ï¿½ï¿½ï¿½Îªï¿½Î°ï¿½xï¿½ï¿½yï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½
             % hIm(y:y+patch_size-1, x:x+patch_size-1) = hIm(y:y+patch_size-1, x:x+patch_size-1) + hPatch;
             hIm(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1) = ...
                 hIm(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1) + hPatch;
@@ -93,8 +95,9 @@ for i = 1:length(gridx)
             cntMat(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1) = ...
                 cntMat(x:x+patch_size-1, y:y+patch_size-1, z:z+patch_size-1) + 1;
         end
+        sparsity = sparsity / k;
         usedtime = toc;
-        fprintf('    Slice %d/%d, %d/%d, took %.3fs.\n',i,length(gridx),j,length(gridy),usedtime);
+        fprintf('    Slice %d/%d, %d/%d, sparsity = %f, took %.3fs.\n',i,length(gridx),j,length(gridy),sparsity,usedtime);
     end
 end
 

@@ -60,7 +60,7 @@ end
 if exist('fname_save', 'var') && ~isempty(fname_save)
     pars.filename = fname_save;
 else
-    pars.filename = sprintf('Temporary dictionary\\reg_sc_b%d_%s', num_bases, datestr(now, 30));	
+    pars.filename = sprintf('Temporary dictionary/reg_sc_b%d_%s', num_bases, datestr(now, 30));	
 end
 
 pars %#ok<NOPRT>
@@ -134,7 +134,7 @@ for t = 1:pars.num_trials    % Modified 2017/01/03
         fsparsity = gamma*sum(sum(abs(S)));
         
         fregs = 0;
-        for ii = 1:size(S, 1)  % oroginal: for ii = size(S,1) ???
+        parfor ii = 1:size(S, 1)  % oroginal: for ii = size(S,1) ???
             fregs = fregs + beta*S(:, ii)'*Sigma*S(:, ii);
         end
         

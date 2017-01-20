@@ -14,7 +14,7 @@
 
 % clear all; clc;
 % read ground truth image
-im_gnd = imread('Data/MRIvalidation/valid8.png');
+im_gnd = imread('Data/MRIvalidation/valid3.png');
 
 % normalize gnd truth image
 im_gnd = double(im_gnd - min(im_gnd(:)));
@@ -26,11 +26,11 @@ size_gnd = size(im_gnd);
 upscale = [1,10];
 
 % load dictionary
-load('Dictionary/Dict_20170109T115523.mat');
+load('Dictionary/Dict_20170112T133007.mat');
 
 % set parameters
 lambda = 0.2;                   % sparsity regularization
-overlap = 4;                    % the more overlap the better (patch size 5x5)
+overlap = 9;                    % the more overlap the better (patch size 5x5)
 maxIter = 20;                   % if 0, do not use backprojection
 
 % read test image
@@ -69,10 +69,9 @@ fprintf('PSNR for Bicubic Interpolation: %f dB\n', bb_psnr);
 fprintf('PSNR for Sparse Representation Recovery: %f dB\n', sp_psnr);
 
 % show the images
-figure; imshow(im_gnd,'DisplayRange',[]);
-title('Ground Truth');
-figure, imshow(im_h,'DisplayRange',[]);
-title('Sparse Recovery');
-figure, imshow(im_b,'DisplayRange',[]);
-title('Bicubic Interpolation');
+figure; 
+subplot(1,3,1); imshow(im_h,'DisplayRange',[]); title('reconstructed');
+subplot(1,3,2); imshow(im_b,'DisplayRange',[]); title('bicubic');
+subplot(1,3,3); imshow(im_gnd,'DisplayRange',[]); title('original');
+
 
